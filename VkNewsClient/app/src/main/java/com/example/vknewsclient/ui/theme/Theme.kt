@@ -65,3 +65,4 @@ fun VkNewsClientTheme(
         content = content
     )
 }
+
