@@ -3,6 +3,9 @@ package com.example.vknewsclient
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -46,6 +49,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.vknewsclient.ui.theme.MainScreen
+import com.example.vknewsclient.ui.theme.PostCard
+import com.example.vknewsclient.ui.theme.VkNewsClientTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -53,15 +59,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             // Обязательно оборачиваем контент в твою тему
-          /*  VkNewsClientTheme {
-                Box(modifier = Modifier
+           VkNewsClientTheme {
+               /*   Box(modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)) {
                     PostCard()
-                }
-            }*/
-            Test()
+                } */
+                MainScreen()
+            }
+
         }
     }
 }
