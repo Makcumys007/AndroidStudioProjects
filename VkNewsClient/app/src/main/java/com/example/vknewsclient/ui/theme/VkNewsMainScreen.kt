@@ -1,6 +1,8 @@
 package com.example.vknewsclient.ui.theme
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -38,38 +40,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.domain.StatisticItem
 import kotlinx.coroutines.launch
 
 @Preview
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val fabIsVisible = remember { mutableStateOf(true) }
+
+    val feedPost = remember { mutableStateOf(FeedPost()) }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            if (fabIsVisible.value) {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        // show snackbar as a suspend function
-                        scope.launch {
-                            val action = snackbarHostState.showSnackbar(
-                                "This is snackbar",
-                                actionLabel = "Hide FAB",
-                                duration = SnackbarDuration.Long
-                            )
-                            if (action == SnackbarResult.ActionPerformed) {
-                                fabIsVisible.value = false
-                            }
-                        }
-                    }
-                ) {
-                    Icon(Icons.Filled.Favorite, contentDescription = null)
-                }
-            }
-        },
         bottomBar = {
             //цвета для навигации
             val myNavigationColors = NavigationBarItemDefaults.colors(
@@ -101,5 +84,24 @@ fun MainScreen() {
                 }
             }
         },
-    ) { Text("Hello") }
+    ) {
+        PostCard(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(8.dp),
+            feedPost = feedPost.value,
+            onStatisticClickListener = { newItem ->
+                val oldStatistics = feedPost.value.statistics
+                val newStatistics = oldStatistics.toMutableList().apply {
+                    replaceAll { oldsItem: StatisticItem ->
+                         if(oldsItem.type == newItem.type) {
+                             oldsItem.copy(count = oldsItem.count + 1)
+                         } else {
+                            oldsItem
+                        }
+                    }
+                }
+                feedPost.value = feedPost.value.copy(statistics = newStatistics)
+            }
+        )
+    }
 }

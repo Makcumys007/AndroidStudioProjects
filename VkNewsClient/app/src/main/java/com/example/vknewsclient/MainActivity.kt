@@ -60,12 +60,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Обязательно оборачиваем контент в твою тему
            VkNewsClientTheme {
-               /*   Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(8.dp)) {
-                    PostCard()
-                } */
+
                 MainScreen()
             }
 
