@@ -31,6 +31,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,16 +42,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.vknewsclient.MainViewModel
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.StatisticItem
 import kotlinx.coroutines.launch
 
-@Preview
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel) {
 
-    val feedPost = remember { mutableStateOf(FeedPost()) }
+    val feedPost = viewModel.feedPost.observeAsState(FeedPost())
 
     Scaffold(
         bottomBar = {
@@ -89,19 +90,16 @@ fun MainScreen() {
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp),
             feedPost = feedPost.value,
-            onStatisticClickListener = { newItem ->
-                val oldStatistics = feedPost.value.statistics
-                val newStatistics = oldStatistics.toMutableList().apply {
-                    replaceAll { oldsItem: StatisticItem ->
-                         if(oldsItem.type == newItem.type) {
-                             oldsItem.copy(count = oldsItem.count + 1)
-                         } else {
-                            oldsItem
-                        }
-                    }
-                }
-                feedPost.value = feedPost.value.copy(statistics = newStatistics)
-            }
+            onViewsClickListener = viewModel::updateCount,
+            onLikeClickListener = { it ->
+                viewModel.updateCount(it)
+            },
+            onShareClickListener = { it ->
+                viewModel.updateCount(it)
+            },
+            onCommentClickListener = { it ->
+                viewModel.updateCount(it)
+            },
         )
     }
 }

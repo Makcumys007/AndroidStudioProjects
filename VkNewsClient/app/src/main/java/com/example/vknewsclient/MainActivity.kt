@@ -3,6 +3,7 @@ package com.example.vknewsclient
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,141 +56,18 @@ import com.example.vknewsclient.ui.theme.VkNewsClientTheme
 
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel by viewModels<MainViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             // Обязательно оборачиваем контент в твою тему
            VkNewsClientTheme {
-
-                MainScreen()
+                MainScreen(viewModel)
             }
 
         }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Test() {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            // Содержимое самой шторки
-            ModalDrawerSheet {
-                Text("Menu", modifier = Modifier.padding(16.dp))
-                Divider()
-                NavigationDrawerItem(
-                    label = { Text("Home") },
-                    selected = false,
-                    onClick = { /* ... */ }
-                )
-                NavigationDrawerItem(
-                    label = { Text("About") },
-                    selected = false,
-                    onClick = { /* ... */ }
-                )
-            }
-        }
-    ) {
-        Scaffold (
-            topBar = {
-                TopAppBar(
-                    title = { Text("TopAppBar title") },
-                    navigationIcon = {
-                        IconButton(onClick = { /* Open Drawer */ }) {
-                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* Action 2 */ }) {
-                            Icon(Icons.Filled.MoreVert, contentDescription = "More")
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    )
-                )
-            },
-            bottomBar = {
-                var selectedItem by remember { mutableIntStateOf(0) }
-                val items = listOf("Favorite", "Edit", "Delete")
-                val selectedIcons = listOf(Icons.Filled.Favorite, Icons.Filled.Edit, Icons.Filled.Delete)
-                val unselectedIcons = listOf(Icons.Outlined.FavoriteBorder, Icons.Outlined.Edit, Icons.Outlined.Delete)
-
-                NavigationBar {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    if (selectedItem == index) selectedIcons[index] else unselectedIcons[index],
-                                    contentDescription = item,
-                                )
-                            },
-                            label = { Text(item) },
-                            selected = selectedItem == index,
-                            onClick = { selectedItem = index },
-                        )
-                    }
-                }
-            },
-
-
-            ) {
-            Text(
-                modifier = Modifier.padding(it),
-                text = "Hello"
-            )
-        }
-    }
-}
-
-@Composable
-private fun Example1() {
-    OutlinedButton (onClick = {}) {
-        Text("Hello World")
-    }
-}
-
-@Composable
-private fun Example2() {
-    var textValue by remember { mutableStateOf("") }
-
-    TextField(
-        value = textValue,
-        onValueChange = { textValue = it },
-        label = { Text("Label") },
-        singleLine = false
-    )
-}
-
-@Composable
-private fun Example3() {
-    val openDialog = remember { mutableStateOf(true) }
-
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onCloseRequest.
-                openDialog.value = false
-            },
-            title = { Text(text = "Are you sure?") },
-            text = {
-                Text(
-                    "Do you want to delete this file?"
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = { openDialog.value = false }) { Text("Yes") }
-            },
-            dismissButton = {
-                TextButton(onClick = { openDialog.value = false }) { Text("No") }
-            },
-        )
-    }
-}
