@@ -2,10 +2,14 @@ package com.example.vknewsclient.ui.theme
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -31,6 +35,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +56,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
-    val feedPost = viewModel.feedPost.observeAsState(FeedPost())
 
     Scaffold(
         bottomBar = {
@@ -86,20 +90,40 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         },
     ) {
-        PostCard(modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .padding(8.dp),
-            feedPost = feedPost.value,
-            onViewsClickListener = viewModel::updateCount,
-            onLikeClickListener = { it ->
-                viewModel.updateCount(it)
-            },
-            onShareClickListener = { it ->
-                viewModel.updateCount(it)
-            },
-            onCommentClickListener = { it ->
-                viewModel.updateCount(it)
-            },
-        )
+        val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+
+        LazyColumn(
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 72.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(
+                feedPosts.value,
+                key = { it.id }
+            ) { feedPost ->
+                PostCard(
+                    modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background),
+                    feedPost = feedPost,
+                    onViewsClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onLikeClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onShareClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                    onCommentClickListener = { statisticItem ->
+                        viewModel.updateCount(feedPost, statisticItem)
+                    },
+                )
+            }
+        }
+
     }
 }
