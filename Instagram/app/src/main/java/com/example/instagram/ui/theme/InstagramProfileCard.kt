@@ -34,12 +34,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.instagram.InstagramModel
+import com.example.instagram.MainViewModel
 import com.example.instagram.R
 
 
 @Composable
-fun InstagramProfileCard(viewModel: MainViewModel) {
-    val isFollowed: State<Boolean> = viewModel.isFollowing.observeAsState(false)
+fun InstagramProfileCard(
+    model: InstagramModel,
+    onFollowedButtonClickListener: (InstagramModel) -> Unit
+) {
+
     Card(
         modifier = Modifier
             .padding(8.dp),
@@ -67,20 +72,20 @@ fun InstagramProfileCard(viewModel: MainViewModel) {
                     UserStatistic("Following", value = "76")
                 }
                 Text(
-                    "Instagram",
+                    "Instagram ${model.id}",
                     fontSize = 32.sp,
                     fontFamily = FontFamily.Cursive,
                 )
                 Text(
-                    "#YoursToMake",
+                    "#${model.title}",
                     fontSize = 14.sp,
                 )
                 Text(
                     "www.facebook.com/emotional_health",
                     fontSize = 14.sp,
                 )
-            FollowButton(isFollowed.value) {
-                viewModel.changeFollowingStatus()
+            FollowButton(isFollowed = model.isFollowed) {
+                onFollowedButtonClickListener(model)
             }
         }
     }
