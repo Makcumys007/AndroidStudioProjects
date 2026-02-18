@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.foundation)
     implementation("androidx.compose.runtime:runtime-livedata:1.2.1")
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation(libs.androidx.compose.foundation.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
