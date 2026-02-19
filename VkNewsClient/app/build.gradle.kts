@@ -55,4 +55,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("androidx.compose.material:material-icons-extended:1.7.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.2.1")
+    implementation("androidx.compose.material3:material3:1.2.0")
+
 }
