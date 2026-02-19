@@ -2,6 +2,7 @@ package com.example.vknewsclient.ui.theme
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -62,7 +63,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
-
+    val selectedNavItem by viewModel.selectedNavItem.observeAsState(NavigationItem.Home)
 
     Scaffold(
         bottomBar = {
@@ -73,20 +74,20 @@ fun MainScreen(viewModel: MainViewModel) {
                 indicatorColor = Color.Transparent
             )
 
-            var selectedItem by remember { mutableIntStateOf(0) }
+      //      var selectedItem by remember { mutableIntStateOf(0) }
 
             NavigationBar {
                 AppNavigation.items.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index },
+                        selected = selectedNavItem == item,
+                        onClick = { viewModel.selectNavItem(item) },
                         label = {
                             // Вызываем stringResource здесь, так как это Composable контекст
                             Text(text = stringResource(id = item.titleResId))
                         },
                         icon = {
                             Icon(
-                                imageVector = if (selectedItem == index) item.selectedIcon else item.unselectedIcon,
+                                imageVector = if (selectedNavItem == item) item.selectedIcon else item.unselectedIcon,
                                 // Для доступности (TalkBack) тоже берем текст из ресурсов
                                 contentDescription = stringResource(id = item.titleResId)
                             )
@@ -96,76 +97,22 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
             }
         },
-    ) {
-        val feedPosts = viewModel.feedPosts.observeAsState(listOf())
-
-
-        LazyColumn(
-            contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 72.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(
-                feedPosts.value,
-                key = { it.id }
-            ) { feedPost ->
-                val dismissState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { value ->
-                        if (value == SwipeToDismissBoxValue.EndToStart) {
-                            viewModel.remove(feedPost)
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                )
-
-
-                SwipeToDismissBox(
-                    modifier = Modifier.animateItem(),
-                    state = dismissState,
-                    enableDismissFromEndToStart = true,
-                    backgroundContent = {
-                        Box(modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxSize()
-                            .background(Color.Red.copy(0.5f), shape = RoundedCornerShape(16.dp)),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Text (
-                                modifier = Modifier.padding(16.dp),
-                                color = Color.White,
-                                text = "Delete",
-                                fontSize = 20.sp
-                            )
-                        }
-                    }
-                ) {
-
-                    PostCard(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background),
-                        feedPost = feedPost,
-                        onViewsClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onLikeClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onShareClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onCommentClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                    )
-                }
+    ) { paddingValues ->
+        when(selectedNavItem) {
+            NavigationItem.Home -> {
+                HomeScreen(viewModel = viewModel, paddingValues = paddingValues)
             }
-        }
 
+            NavigationItem.Favorites -> TextCounter("Favorites")
+            NavigationItem.Profile -> TextCounter("Profile")
+        }
     }
+}
+
+@Composable
+private fun TextCounter(name: String) {
+    var count by remember {
+        mutableStateOf(0)
+    }
+    Text(modifier = Modifier.clickable { count++ }, text = "$name Count: $count", color = Color.Blue)
 }
