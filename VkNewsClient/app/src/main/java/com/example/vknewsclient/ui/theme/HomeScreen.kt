@@ -1,5 +1,6 @@
 package com.example.vknewsclient.ui.theme
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,16 @@ fun HomeScreen(
             )
         }
         is HomeScreenState.Comments -> {
-            CommentsScreen(currentState.feedPost, currentState.comments)
+            CommentsScreen(
+                currentState.feedPost,
+                currentState.comments,
+                onBackPressed = {
+                    viewModel.closeComments()
+                }
+            )
+            BackHandler() {
+                viewModel.closeComments()
+            }
         }
 
         HomeScreenState.Initial -> TODO()
@@ -116,8 +126,8 @@ private fun FeedPosts(
                     onShareClickListener = { statisticItem ->
                         viewModel.updateCount(feedPost, statisticItem)
                     },
-                    onCommentClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
+                    onCommentClickListener = {
+                        viewModel.showComments(feedPost)
                     },
                 )
             }
