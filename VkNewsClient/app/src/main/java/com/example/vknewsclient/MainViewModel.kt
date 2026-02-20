@@ -10,7 +10,7 @@ import com.example.vknewsclient.ui.theme.NavigationItem
 class MainViewModel: ViewModel() {
 
     private val sourceList = mutableListOf<FeedPost>().apply {
-        repeat(10) {
+        repeat(3) {
             add(FeedPost(id = it))
         }
     }
