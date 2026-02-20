@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vknewsclient.MainViewModel
+import com.example.vknewsclient.domain.PostComment
 
 @Composable
 fun HomeScreen(
@@ -31,8 +32,18 @@ fun HomeScreen(
 ) {
     val feedPosts = viewModel.feedPosts.observeAsState(listOf())
 
+    if (feedPosts.value.isNotEmpty()) {
+        val comments = mutableListOf<PostComment>().apply {
+            repeat(20){
+                add(
+                    PostComment(id = it)
+                )
+            }
+        }
+        CommentsScreen(feedPosts.value.get(0), comments)
+    }
 
-    LazyColumn(
+/*    LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
             start = 8.dp,
@@ -97,5 +108,5 @@ fun HomeScreen(
                 )
             }
         }
-    }
+    }*/
 }
