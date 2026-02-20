@@ -19,31 +19,45 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vknewsclient.MainViewModel
-import com.example.vknewsclient.domain.PostComment
+import com.example.vknewsclient.domain.FeedPost
 
 @Composable
 fun HomeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
+    val currentState = screenState.value
 
-    if (feedPosts.value.isNotEmpty()) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(20){
-                add(
-                    PostComment(id = it)
-                )
-            }
+    when (currentState) {
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                viewModel,
+                paddingValues,
+                currentState.posts
+            )
         }
-        CommentsScreen(feedPosts.value.get(0), comments)
+        is HomeScreenState.Comments -> {
+            CommentsScreen(currentState.feedPost, currentState.comments)
+        }
+
+        HomeScreenState.Initial -> TODO()
     }
 
-/*    LazyColumn(
+
+}
+
+@Composable
+private fun FeedPosts(
+    viewModel: MainViewModel,
+    paddingValues: PaddingValues,
+    posts: List<FeedPost>,
+) {
+    LazyColumn(
+        modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
             top = 16.dp,
             start = 8.dp,
@@ -53,7 +67,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(
-            feedPosts.value,
+            posts,
             key = { it.id }
         ) { feedPost ->
             val dismissState = rememberSwipeToDismissBoxState(
@@ -108,5 +122,5 @@ fun HomeScreen(
                 )
             }
         }
-    }*/
+    }
 }
