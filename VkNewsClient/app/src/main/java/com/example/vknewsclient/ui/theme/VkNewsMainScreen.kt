@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vknewsclient.NewsFeedViewModel
 import com.example.vknewsclient.domain.FeedPost
@@ -44,15 +45,19 @@ fun MainScreen() {
             NavigationBar {
                 // Получаем текущий маршрут (route) из backstack для подсветки активной иконки
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+
 
                 // Проходим циклом по элементам навигации (Главная, Избранное, Профиль)
                 AppNavigation.items.forEachIndexed { index, item ->
+                    val selected = navBackStackEntry?.destination?.hierarchy?.any() {
+                        it.route == item.screen.route
+                    } ?: false
                     NavigationBarItem(
-                        selected = currentRoute == item.screen.route,
+                        selected = selected,
                         onClick = {
-                            // Переход на выбранный экран при клике
-                            navigationState.navigateTo(item.screen.route)
+                            if (!selected) {
+                                navigationState.navigateTo(item.screen.route)
+                            }
                         },
                         label = {
                             Text(text = stringResource(id = item.titleResId))
@@ -60,7 +65,7 @@ fun MainScreen() {
                         icon = {
                             Icon(
                                 // Выбираем иконку (закрашенная или контурная) в зависимости от активности вкладки
-                                imageVector = if (currentRoute == item.screen.route) item.selectedIcon else item.unselectedIcon,
+                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                                 contentDescription = stringResource(id = item.titleResId)
                             )
                         },
@@ -79,15 +84,14 @@ fun MainScreen() {
                     onCommentClickListener = {
                         // При клике на иконку комментариев в ленте, сохраняем пост в состояние
                         commentsToPost.value = it
-                        navigationState.navigateTo(Screen.Comments.route)
+                        navigationState.navigateToComments()
                     }
                 )
             },
             commentsScreenContent = {
                 CommentsScreen(
                     onBackPressed = {
-                        // При нажатии "назад" сбрасываем состояние в null, чтобы вернуться к ленте
-                        commentsToPost.value = null
+                        navigationState.navHostController.popBackStack()
                     },
                     feedPost = commentsToPost.value!!
                 )

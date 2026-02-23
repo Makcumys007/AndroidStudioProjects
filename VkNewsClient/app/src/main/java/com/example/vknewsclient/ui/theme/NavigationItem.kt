@@ -24,7 +24,7 @@ sealed class NavigationItem(
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
         route = "home",
-        screen = Screen.NewsFeed
+        screen = Screen.Home
     )
     object Favorites : NavigationItem(
         titleResId = R.string.navigation_item_favorites,
