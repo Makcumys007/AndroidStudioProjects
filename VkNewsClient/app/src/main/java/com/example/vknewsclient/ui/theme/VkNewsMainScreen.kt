@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vknewsclient.NewsFeedViewModel
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.navigation.AppNavGraph
+import com.example.vknewsclient.navigation.Screen
 import com.example.vknewsclient.navigation.rememberNavigationState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,25 +72,25 @@ fun MainScreen() {
         // Настройка графа навигации, который определяет, какой контент отрисовывать
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreenContent = {
+            newsFeedScreenContent = {
                 // Логика переключения между лентой новостей и комментариями внутри вкладки "Главная"
-                if (commentsToPost.value == null) {
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentClickListener = {
-                            // При клике на иконку комментариев в ленте, сохраняем пост в состояние
-                            commentsToPost.value = it
-                        }
-                    )
-                } else {
-                    CommentsScreen(
-                        onBackPressed = {
-                            // При нажатии "назад" сбрасываем состояние в null, чтобы вернуться к ленте
-                            commentsToPost.value = null
-                        },
-                        feedPost = commentsToPost.value!!
-                    )
-                }
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentClickListener = {
+                        // При клике на иконку комментариев в ленте, сохраняем пост в состояние
+                        commentsToPost.value = it
+                        navigationState.navigateTo(Screen.Comments.route)
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    onBackPressed = {
+                        // При нажатии "назад" сбрасываем состояние в null, чтобы вернуться к ленте
+                        commentsToPost.value = null
+                    },
+                    feedPost = commentsToPost.value!!
+                )
             },
             // Заглушки для разделов "Избранное" и "Профиль"
             favoriteScreenContent = { TextCounter("Favorites") },
