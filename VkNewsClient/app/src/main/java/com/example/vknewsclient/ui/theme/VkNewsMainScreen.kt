@@ -33,11 +33,6 @@ fun MainScreen() {
     // Управление состоянием навигации (кастомный помощник для работы с NavHostController)
     val navigationState = rememberNavigationState()
 
-    // Состояние для хранения поста, к которому мы хотим посмотреть комментарии.
-    // Если null — показываем ленту, если не null — экран комментариев для конкретного поста.
-    val commentsToPost: MutableState<FeedPost?> = remember {
-        mutableStateOf(null)
-    }
 
     Scaffold(
         // Настройка нижней панели навигации
@@ -82,18 +77,16 @@ fun MainScreen() {
                 HomeScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
-                        // При клике на иконку комментариев в ленте, сохраняем пост в состояние
-                        commentsToPost.value = it
-                        navigationState.navigateToComments()
+                        navigationState.navigateToComments(it)
                     }
                 )
             },
-            commentsScreenContent = {
+            commentsScreenContent = { feedPost ->
                 CommentsScreen(
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
                     },
-                    feedPost = commentsToPost.value!!
+                    feedPost = feedPost
                 )
             },
             // Заглушки для разделов "Избранное" и "Профиль"
