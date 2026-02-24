@@ -16,7 +16,12 @@ class NewsFeedViewModel: ViewModel() {
     // Исходный список постов (заглушка)
     private val sourceList = mutableListOf<FeedPost>().apply {
         repeat(3) {
-            add(FeedPost(id = it))
+            add(
+                FeedPost(
+                    id = it,
+                    contentText = "Content $it"
+                )
+            )
         }
     }
 
