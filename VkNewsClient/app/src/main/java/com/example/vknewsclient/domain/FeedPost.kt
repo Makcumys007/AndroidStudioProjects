@@ -1,8 +1,13 @@
 package com.example.vknewsclient.domain
 
+
+import android.os.Parcelable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavType
+import androidx.savedstate.SavedState
 import com.example.vknewsclient.R
 import com.example.vknewsclient.domain.StatisticItem
+
 
 data class FeedPost (
     val id: Int = 0,
